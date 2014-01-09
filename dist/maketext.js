@@ -1,6 +1,6 @@
 /*! maketext.js - v0.1.0 - 2014-01-09
 * https://github.com/paymill/maketext.js
-* Copyright (c) 2014 Matthias Dietrich / PAYMILL GmbH / Coma-systems Co. Ltd. */
+* GPL licensed; Copyright (c) 2014 Matthias Dietrich / PAYMILL GmbH / Coma-systems Co. Ltd. */
 /*!
  * maketext.js
  * https://github.com/paymill/maketext.js
