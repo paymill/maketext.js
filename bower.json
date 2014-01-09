@@ -1,25 +1,28 @@
 {
-  "name": "maketext.js",
-  "version": "0.1.0",
-  "authors": [
-    "Matthias Dietrich <perl@rb.ly>"
-  ],
-  "description": "JavaScript port of Sean M. Burke's Maketext",
-  "keywords": [
-    "maketext",
-    "JavaScript",
-    "translation",
-    "internationalization",
-    "localization",
-    "i18n",
-    "l10n"
-  ],
-  "license": "GPL",
-  "ignore": [
-    "**/.*",
-    "node_modules",
-    "bower_components",
-    "test",
-    "tests"
-  ]
+    "name": "maketext.js",
+    "version": "0.1.0",
+    "authors": [
+        "Matthias Dietrich <perl@rb.ly>",
+        "PAYMILL GmbH <support@paymill.com>",
+        "Coma-systems Co. Ltd."
+    ],
+    "description": "JavaScript port of Sean M. Burke's Maketext",
+    "license": "GPL",
+    "keywords": [
+        "maketext",
+        "JavaScript",
+        "translation",
+        "internationalization",
+        "localization",
+        "i18n",
+        "l10n"
+    ],
+    "license": "GPL",
+    "ignore": [
+        "**/.*",
+        "node_modules",
+        "bower_components",
+        "test",
+        "tests"
+    ]
 }
