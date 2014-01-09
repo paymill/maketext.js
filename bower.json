@@ -1,6 +1,7 @@
 {
     "name": "maketext.js",
     "version": "0.1.0",
+    "main": "dist/maketext.min.js",
     "authors": [
         "Matthias Dietrich <perl@rb.ly>",
         "PAYMILL GmbH <support@paymill.com>",
