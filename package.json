@@ -1,7 +1,7 @@
 {
     "name": "maketext.js",
     "description": "JavaScript port of Sean M. Burke's Maketext",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "homepage": "https://github.com/paymill/maketext.js",
     "author": {
         "name": "Matthias Dietrich / PAYMILL GmbH / Coma-systems Co. Ltd.",

@@ -1,4 +1,4 @@
-/*!
+/*
  * maketext.js
  * https://github.com/paymill/maketext.js
  * GPL licensed
@@ -95,7 +95,7 @@ var Parser = function Parser(str, pos, val) {
     this.str = String(str);
     this.pos = Number(pos) || 0;
     this.val = val;
-}
+};
 
 Parser.prototype = {
 

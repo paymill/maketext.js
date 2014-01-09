@@ -1,4 +1,4 @@
-/*!
+/*
  * maketext.js
  * https://github.com/paymill/maketext.js
  * GPL licensed
@@ -33,6 +33,9 @@
  *
  * #### `lexicons`
  * Object with lexicon per language: `{ 'en-gb': { default: { key: 'value' } } }`
+ *
+ * #### `defaultDomain`
+ * Domain to search in for lexicon keys, defaults to: `*`
  */
 var maketext = function(opts) {
     if (!opts) opts = {};
@@ -40,6 +43,7 @@ var maketext = function(opts) {
     this._loadTimeout       = opts.loadTimeout || 20000; // time to wait for loading script (msec)
     this._base_url          = opts.base_url || "";
     this._fallbackLanguages = opts.fallbackLanguages || ['*', 'i-default', 'en', 'en-US'];
+    this._defaultDomain     = opts.defaultDomain || '*';
     this._lexicons          = {};
     this._callbacks         = {};
 
@@ -200,7 +204,7 @@ maketext.prototype = {
         var self      = this;
 
         function success() {
-            onSuccess(new maketext.Handle(self._lexicons[lang]));
+            onSuccess(new maketext.Handle(self._lexicons[lang], self._defaultDomain));
         }
 
         function error() {
@@ -249,7 +253,7 @@ maketext.prototype = {
      * @return {object}     Cloned object
      */
     _cloneObject: function(obj) {
-        function Temp() {};
+        function Temp() {}
         Temp.prototype = obj;
         return new Temp();
     }
@@ -258,10 +262,12 @@ maketext.prototype = {
 /**
  * Representing a lexicon handle
  *
- * @param {object} lexicon Lexicon object from `maketext`
+ * @param {object} lexicon       Lexicon object from `maketext`
+ * @param {string} defaultDomain Default domain from `maketext`
  */
-maketext.Handle = function(lexicon) {
-    this._lexicon = lexicon;
+maketext.Handle = function(lexicon, defaultDomain) {
+    this._lexicon       = lexicon;
+    this._defaultDomain = defaultDomain;
 };
 
 maketext.Handle.prototype = {
@@ -271,16 +277,42 @@ maketext.Handle.prototype = {
      *
      * @param  {string}     id  The lexicon key to be translated
      * @param  {string|int} ... Value to be replaced with placeholders (can be repeated)
+     * @param  {object}     ... Optional, more options, currently only supporting `{ domain: 'lexicon-domain' }`
      *
      * @return {string}         Translated string
      */
     maketext: function(id) {
-        if (typeof this._lexicon[id] !== "function") {
-            this._lexicon[id] = this.compile(this._lexicon[id]);
+        var domain = this._defaultDomain,
+            index, args;
+        for (index in arguments) {
+            if (Object.prototype.toString.call(arguments[index]) === '[object Object]' &&
+                arguments[index].domain) {
+                domain = arguments[index].domain;
+            }
         }
-        var args = Array.prototype.slice.call(arguments, 1);
+
+        if (!(domain in this._lexicon) || !(id in this._lexicon[domain])) {
+            return this.failWith.apply(this, arguments);
+        }
+
+        if (typeof this._lexicon[domain][id] !== "function") {
+            this._lexicon[domain][id] = this.compile(this._lexicon[domain][id]);
+        }
+
+        args = Array.prototype.slice.call(arguments, 1);
         args.unshift(this);
-        return this._lexicon[id].apply(this, args);
+        return this._lexicon[domain][id].apply(this, args);
+    },
+
+    /**
+     * Does something when a key or domain hasn't been found in the lexicon.
+     * Gets passed the same arguments as the `maketext` function
+     *
+     * @param  {[type]} id [description]
+     * @return {[type]}    [description]
+     */
+    failWith: function(id) {
+        return '? ' + id;
     },
 
     /**
