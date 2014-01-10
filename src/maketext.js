@@ -218,6 +218,18 @@ maketext.prototype = {
         this._load(lang, success, error);
     },
 
+    /**
+     * Tries to resolve a language an eventually falls back to the
+     * fallback language when nothing could be resolved.
+     *
+     * @param  {string} lang Language, eg. 'de' or 'en-gb'
+     * @return {string}      Language that has been found
+     *
+     * When you pass 'de-de' as `lang` and only have loaded 'de',
+     * this function will find it, because it tries to search
+     * for the beginning parts of the language if the exact
+     * language couldn't be found.
+     */
     _resolve_lang: function(lang) {
         var langs = String(lang).match(/(\w+(?:-\w+)*)/g) || [], i;
 
@@ -284,9 +296,11 @@ maketext.Handle.prototype = {
     maketext: function(id) {
         var domain = this._defaultDomain,
             index, args;
+
         for (index in arguments) {
             if (Object.prototype.toString.call(arguments[index]) === '[object Object]' &&
-                arguments[index].domain) {
+                arguments[index].domain)
+            {
                 domain = arguments[index].domain;
             }
         }
@@ -306,10 +320,15 @@ maketext.Handle.prototype = {
 
     /**
      * Does something when a key or domain hasn't been found in the lexicon.
-     * Gets passed the same arguments as the `maketext` function
+     * Gets passed the same arguments as the `maketext` function.  Default is
+     * to prefix the given language key with '? '.  Overwrite this if the
+     * behavior should be changed.
      *
-     * @param  {[type]} id [description]
-     * @return {[type]}    [description]
+     * @param  {string}     id  The lexicon key to be translated
+     * @param  {string|int} ... Value to be replaced with placeholders (can be repeated)
+     * @param  {object}     ... Optional, more options, currently only supporting `{ domain: 'lexicon-domain' }`
+     *
+     * @return {string}    `id` prefixed with '? '
      */
     failWith: function(id) {
         return '? ' + id;
