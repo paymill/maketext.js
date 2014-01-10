@@ -1,5 +1,9 @@
 
 
+<!-- Start src/parser.js -->
+
+<!-- End src/parser.js -->
+
 <!-- Start src/maketext.js -->
 
 ## new maketext(opts)
@@ -25,14 +29,12 @@ Defaults to:
 Array of languages that should be available (required when no `lexicons` provided)
 
 #### `lexicons`
-Object with lexicon per language:
+Object with lexicon per language, e.g.:
 
     { 'en-gb': { default: { key: 'value with variable [_1]' } } }
 
 #### `defaultDomain`
-Domain to search in for lexicon keys, defaults to:
-
-    '*'
+Domain to search in for lexicon keys, defaults to: `'*'`
 
 ### Params: 
 
@@ -83,7 +85,7 @@ Loads a language and fires success or error events
 
 * **callback** *onError* Will be called on an error (eg. language file taking to long to load)
 
-## _lexicon_aux(lang, lexobj, lexicon)
+## _lexiconAux(lang, lexobj, lexicon)
 
 Actually sets the lexicon internally, calls success callbacks and clears timeout timer
 
@@ -95,7 +97,7 @@ Actually sets the lexicon internally, calls success callbacks and clears timeout
 
 * **object** *lexicon* Object containing lexicon data: `{ domain: { key: value }}`
 
-## _resolve_lang(lang)
+## _resolveLang(lang)
 
 Tries to resolve a language an eventually falls back to the
 fallback language when nothing could be resolved.
@@ -135,7 +137,7 @@ Representing a lexicon handle
 
 * **string** *defaultDomain* Default domain from `maketext`
 
-## maketext(id, value, [options])
+## maketext(id, value, options)
 
 Translates a key to a text
 
@@ -145,13 +147,13 @@ Translates a key to a text
 
 * **string|int** *value* Value to be replaced with placeholders (can be repeated)
 
-* **object** *[options]* (Optional) More options, currently only supporting `{ domain: 'lexicon-domain' }`
+* **object** *options* (Optional) More options, currently only supporting `{ domain: 'lexicon-domain' }`
 
 ### Return:
 
 * **string** Translated string
 
-## failWith(id, value, [options])
+## failWith(id, value, options)
 
 Does something when a key or domain hasn't been found in the lexicon.
 Gets passed the same arguments as the `maketext` function.  Default is
@@ -164,7 +166,7 @@ behavior should be changed.
 
 * **string|int** *value* Value to be replaced with placeholders (can be repeated)
 
-* **object** *[options]* (Optional) More options, currently only supporting `{ domain: 'lexicon-domain' }`
+* **object** *options* (Optional) More options, currently only supporting `{ domain: 'lexicon-domain' }`
 
 ### Return:
 
@@ -201,8 +203,4 @@ Compiles a string, aka preparation for interpolation
 * **function** Reference to a function, which can be called with parameters that get interpolated
 
 <!-- End src/maketext.js -->
-
-<!-- Start src/parser.js -->
-
-<!-- End src/parser.js -->
 

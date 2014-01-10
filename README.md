@@ -2,6 +2,10 @@
 
 > JavaScript port of Sean M. Burke's Maketext
 
+## What it does
+
+Basically, it translates keys into texts.  It also can handle multiple languages, multiple domains for a language (think of scopes for languages, where keys don't overwrite keys from other scopes) as well as interpolate variables and various functions.
+
 * [What it does](#what-it-does)
 * [Quickstart](#quickstart)
 * [Lazy loading](#lazy-loading)
@@ -10,10 +14,6 @@
 * [API reference](#api-reference)
 * [License and Copyright](#license-and-copyright)
 
-
-## What it does
-
-Basically, it translates keys into texts.  It also can handle multiple languages, multiple domains for a language (think of scopes for languages, where keys don't overwrite keys from other scopes) as well as interpolate variables and various functions.
 
 ## Quickstart
 
@@ -80,7 +80,7 @@ Example for a file `en-gb.js`:
 
 ## Implementing own functions
 
-Currently only the `quant` function is implemented for usage in texts.  You can implement your own function by extending each handle.  Functions inlined into translations can be added like the following:
+Currently only the `quant` function is implemented for usage within texts.  You can implement your own function by extending each handle.  Functions inlined into translations can be added like the following:
 
 	var langHandle;
 	var mtInstance = new maketext({
@@ -92,10 +92,10 @@ Currently only the `quant` function is implemented for usage in texts.  You can 
         lang: 'en-gb',
         onSuccess: function(handle) { langHandle = handle }
     });
-    
+
     // Add function `increase`
     langHandle.increase = function() { return arguments[1] + 1 }
-    
+
     langHandle.maketext('Increase', 2);
     //   --> 'This increases 2 to 3'
 
@@ -111,10 +111,10 @@ The default behaviour is to prefix the language key with `? ` and return it.  Gi
         lang: 'en-gb',
         onSuccess: function(handle) { langHandle = handle }
     });
-    
+
     // Overwrite `failWith` (note: don't alert!):
     langHandle.failWith = function() { alert('Key missing: ' + arguments[0]) }
-    
+
     langHandle.maketext('Does.Not.Exist');
     //   --> alerts 'Key missing: Does.Not.Exist'
 
@@ -123,6 +123,10 @@ The default behaviour is to prefix the language key with `? ` and return it.  Gi
 If you want to extend `maketext.js` or want to use more advanced features, check the following API reference for in-depth details.
 
 
+
+<!-- Start src/parser.js -->
+
+<!-- End src/parser.js -->
 
 <!-- Start src/maketext.js -->
 
@@ -149,14 +153,12 @@ Defaults to:
 Array of languages that should be available (required when no `lexicons` provided)
 
 ##### `lexicons`
-Object with lexicon per language:
+Object with lexicon per language, e.g.:
 
     { 'en-gb': { default: { key: 'value with variable [_1]' } } }
 
 ##### `defaultDomain`
-Domain to search in for lexicon keys, defaults to:
-
-    '*'
+Domain to search in for lexicon keys, defaults to: `'*'`
 
 #### Params: 
 
@@ -207,7 +209,7 @@ Loads a language and fires success or error events
 
 * **callback** *onError* Will be called on an error (eg. language file taking to long to load)
 
-### _lexicon_aux(lang, lexobj, lexicon)
+### _lexiconAux(lang, lexobj, lexicon)
 
 Actually sets the lexicon internally, calls success callbacks and clears timeout timer
 
@@ -219,7 +221,7 @@ Actually sets the lexicon internally, calls success callbacks and clears timeout
 
 * **object** *lexicon* Object containing lexicon data: `{ domain: { key: value }}`
 
-### _resolve_lang(lang)
+### _resolveLang(lang)
 
 Tries to resolve a language an eventually falls back to the
 fallback language when nothing could be resolved.
@@ -259,7 +261,7 @@ Representing a lexicon handle
 
 * **string** *defaultDomain* Default domain from `maketext`
 
-### maketext(id, value, [options])
+### maketext(id, value, options)
 
 Translates a key to a text
 
@@ -269,13 +271,13 @@ Translates a key to a text
 
 * **string|int** *value* Value to be replaced with placeholders (can be repeated)
 
-* **object** *[options]* (Optional) More options, currently only supporting `{ domain: 'lexicon-domain' }`
+* **object** *options* (Optional) More options, currently only supporting `{ domain: 'lexicon-domain' }`
 
 #### Return:
 
 * **string** Translated string
 
-### failWith(id, value, [options])
+### failWith(id, value, options)
 
 Does something when a key or domain hasn't been found in the lexicon.
 Gets passed the same arguments as the `maketext` function.  Default is
@@ -288,7 +290,7 @@ behavior should be changed.
 
 * **string|int** *value* Value to be replaced with placeholders (can be repeated)
 
-* **object** *[options]* (Optional) More options, currently only supporting `{ domain: 'lexicon-domain' }`
+* **object** *options* (Optional) More options, currently only supporting `{ domain: 'lexicon-domain' }`
 
 #### Return:
 
@@ -326,13 +328,12 @@ Compiles a string, aka preparation for interpolation
 
 <!-- End src/maketext.js -->
 
-<!-- Start src/parser.js -->
-
-<!-- End src/parser.js -->
-
 
 
 
 ## License and Copyright
+
+Originally developed by Coma-systems Co. Ltd., [https://code.google.com/p/maketext-js/](https://code.google.com/p/maketext-js/).  Refactored, changed, documented and pushed to Github by PAMYILL GmbH [https://github.com/paymill/maketext.js](https://github.com/paymill/maketext.js).
+
 Copyright (c) 2014 PAYMILL GmbH (Matthias Dietrich) / Coma-systems Co. Ltd., contributors.
 Released under the GPL license

@@ -2,11 +2,11 @@
 
 > {%= description %}
 
-{%= toc %}
-
 ## What it does
 
 Basically, it translates keys into texts.  It also can handle multiple languages, multiple domains for a language (think of scopes for languages, where keys don't overwrite keys from other scopes) as well as interpolate variables and various functions.
+
+{%= toc %}
 
 ## Quickstart
 
@@ -73,7 +73,7 @@ Example for a file `en-gb.js`:
 
 ## Implementing own functions
 
-Currently only the `quant` function is implemented for usage in texts.  You can implement your own function by extending each handle.  Functions inlined into translations can be added like the following:
+Currently only the `quant` function is implemented for usage within texts.  You can implement your own function by extending each handle.  Functions inlined into translations can be added like the following:
 
 	var langHandle;
 	var mtInstance = new maketext({
@@ -85,10 +85,10 @@ Currently only the `quant` function is implemented for usage in texts.  You can 
         lang: 'en-gb',
         onSuccess: function(handle) { langHandle = handle }
     });
-    
+
     // Add function `increase`
     langHandle.increase = function() { return arguments[1] + 1 }
-    
+
     langHandle.maketext('Increase', 2);
     //   --> 'This increases 2 to 3'
 
@@ -104,10 +104,10 @@ The default behaviour is to prefix the language key with `? ` and return it.  Gi
         lang: 'en-gb',
         onSuccess: function(handle) { langHandle = handle }
     });
-    
+
     // Overwrite `failWith` (note: don't alert!):
     langHandle.failWith = function() { alert('Key missing: ' + arguments[0]) }
-    
+
     langHandle.maketext('Does.Not.Exist');
     //   --> alerts 'Key missing: Does.Not.Exist'
 
@@ -118,5 +118,8 @@ If you want to extend `{%= name %}` or want to use more advanced features, check
 {%= _.doc("api.tmpl.md") %}
 
 ## License and Copyright
+
+Originally developed by Coma-systems Co. Ltd., [https://code.google.com/p/maketext-js/](https://code.google.com/p/maketext-js/).  Refactored, changed, documented and pushed to Github by PAMYILL GmbH [https://github.com/paymill/maketext.js](https://github.com/paymill/maketext.js).
+
 {%= copyright %}
 {%= license %}

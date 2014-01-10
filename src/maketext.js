@@ -32,14 +32,12 @@
  * Array of languages that should be available (required when no `lexicons` provided)
  *
  * #### `lexicons`
- * Object with lexicon per language:
+ * Object with lexicon per language, e.g.:
  *
  *     { 'en-gb': { default: { key: 'value with variable [_1]' } } }
  *
  * #### `defaultDomain`
- * Domain to search in for lexicon keys, defaults to:
- *
- *     '*'
+ * Domain to search in for lexicon keys, defaults to: `'*'`
  *
  * @method new maketext
  * @param  {object} opts Options object
@@ -92,14 +90,14 @@ maketext.prototype = {
             var self = this;
             this._load(base,
                 function() {
-                    self._lexicon_aux(lang, this._cloneObject(self._lexicons[base]), lexicon);
+                    self._lexiconAux(lang, this._cloneObject(self._lexicons[base]), lexicon);
                 },
                 function() {
                     throw new Error("Can't load lexicon file for `" + lang + "'");
                 }
             );
         } else {
-            this._lexicon_aux(lang, {}, lexicon);
+            this._lexiconAux(lang, {}, lexicon);
         }
     },
 
@@ -120,11 +118,11 @@ maketext.prototype = {
      * (timeout when loading language files from the server).
      *
      * @function getHandle
-     * @param  {object} opts Options object
+     * @param {object} opts Options object
      */
     getHandle: function(opts) {
         opts          = opts || {};
-        var lang      = this._resolve_lang(opts.lang || navigator.language || navigator.browserLanguage);
+        var lang      = this._resolveLang(opts.lang || navigator.language || navigator.browserLanguage);
         var onSuccess = opts.onSuccess;
         var onError   = opts.onError;
         var self      = this;
@@ -196,13 +194,13 @@ maketext.prototype = {
     /**
      * Actually sets the lexicon internally, calls success callbacks and clears timeout timer
      *
-     * @function _lexicon_aux
+     * @function _lexiconAux
      * @api private
      * @param  {string} lang    Language key to associate the lexicon with
      * @param  {object} lexobj  Object of the base that will be copied and extended
      * @param  {object} lexicon Object containing lexicon data: `{ domain: { key: value }}`
      */
-    _lexicon_aux: function(lang, lexobj, lexicon) {
+    _lexiconAux: function(lang, lexobj, lexicon) {
         var i;
 
         // Merge lexicon into base
@@ -235,12 +233,12 @@ maketext.prototype = {
      * for the beginning parts of the language if the exact
      * language couldn't be found.
      *
-     * @function _resolve_lang
+     * @function _resolveLang
      * @api private
      * @param  {string} lang Language, eg. 'de' or 'en-gb'
-     * @return {string}      Language that has been found
+     * @return {string} Language that has been found
      */
-    _resolve_lang: function(lang) {
+    _resolveLang: function(lang) {
         var langs = String(lang).match(/(\w+(?:-\w+)*)/g) || [], i;
 
         for (i = 0; i < langs.length; i++) {
@@ -274,7 +272,7 @@ maketext.prototype = {
      * @function _cloneObject
      * @api private
      * @param  {object} obj Object to be cloned
-     * @return {object}     Cloned object
+     * @return {object} Cloned object
      */
     _cloneObject: function(obj) {
         function Temp() {}
@@ -301,9 +299,9 @@ maketext.Handle.prototype = {
      * Translates a key to a text
      *
      * @function maketext
-     * @param  {string}     id        The lexicon key to be translated
-     * @param  {string|int} value     Value to be replaced with placeholders (can be repeated)
-     * @param  {object}     [options] (Optional) More options, currently only supporting `{ domain: 'lexicon-domain' }`
+     * @param  {string}     id      The lexicon key to be translated
+     * @param  {string|int} value   Value to be replaced with placeholders (can be repeated)
+     * @param  {object}     options (Optional) More options, currently only supporting `{ domain: 'lexicon-domain' }`
      * @return {string} Translated string
      */
     maketext: function(id) {
@@ -338,10 +336,10 @@ maketext.Handle.prototype = {
      * behavior should be changed.
      *
      * @function failWith
-     * @param  {string}     id        The lexicon key to be translated
-     * @param  {string|int} value     Value to be replaced with placeholders (can be repeated)
-     * @param  {object}     [options] (Optional) More options, currently only supporting `{ domain: 'lexicon-domain' }`
-     * @return {string}    `id` prefixed with '? '
+     * @param  {string}     id      The lexicon key to be translated
+     * @param  {string|int} value   Value to be replaced with placeholders (can be repeated)
+     * @param  {object}     options (Optional) More options, currently only supporting `{ domain: 'lexicon-domain' }`
+     * @return {string} `id` prefixed with '? '
      */
     failWith: function(id) {
         return '? ' + id;
