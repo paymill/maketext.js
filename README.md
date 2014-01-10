@@ -124,10 +124,6 @@ If you want to extend `maketext.js` or want to use more advanced features, check
 
 
 
-<!-- Start src/parser.js -->
-
-<!-- End src/parser.js -->
-
 <!-- Start src/maketext.js -->
 
 ### new maketext(opts)
@@ -147,6 +143,7 @@ Base URL to load language files from the server.
 Array of fallback languages to use when the requested language is not
 available while calling getHandle.
 Defaults to:
+
     ['*', 'i-default', 'en', 'en-US']
 
 ##### `languages`
@@ -327,6 +324,10 @@ Compiles a string, aka preparation for interpolation
 * **function** Reference to a function, which can be called with parameters that get interpolated
 
 <!-- End src/maketext.js -->
+
+<!-- Start src/parser.js -->
+
+<!-- End src/parser.js -->
 
 
 

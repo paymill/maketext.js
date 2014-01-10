@@ -20,6 +20,7 @@
  * Array of fallback languages to use when the requested language is not
  * available while calling getHandle.
  * Defaults to:
+ *
  *     ['*', 'i-default', 'en', 'en-US']
  *
  * #### `languages`
