@@ -15,7 +15,7 @@ module.exports = function(grunt) {
             options: {
                 banner: '<%= banner %>',
                 separator: ';',
-                stripBanners: true
+                stripBanners: { block: true }
             },
             dist: {
                 src: ['src/maketext.js', 'src/parser.js'],
@@ -55,6 +55,12 @@ module.exports = function(grunt) {
             lib_test: {
                 src: ['dist/maketext.js']
             }
+        },
+        markdox: {
+            sourceFiles: {
+                src: 'src/*.js',
+                dest: 'docs/maketext.md'
+            }
         }
     });
 
@@ -62,9 +68,10 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-jshint');
+    grunt.loadNpmTasks('grunt-markdox');
 
     // Default task.
-    grunt.registerTask('default', ['concat', 'jshint', 'uglify']);
-    grunt.registerTask('dist', ['concat', 'uglify']);
+    grunt.registerTask('default', ['concat', 'jshint', 'uglify', 'markdox']);
+    grunt.registerTask('dist', ['concat', 'uglify', 'markdox']);
 
 };

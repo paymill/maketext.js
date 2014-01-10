@@ -1,12 +1,11 @@
-/*! maketext.js - v0.1.1 - 2014-01-09
+/*! maketext.js - v0.1.1 - 2014-01-10
 * https://github.com/paymill/maketext.js
 * GPL licensed; Copyright (c) 2014 Matthias Dietrich / PAYMILL GmbH / Coma-systems Co. Ltd. */
 'use strict';
 
 /**
- * maketext constructor
  *
- * @param  {object} opts Options object
+ * maketext constructor
  *
  * ### Options object explained
  *
@@ -20,16 +19,25 @@
  * #### `fallbackLanguages`
  * Array of fallback languages to use when the requested language is not
  * available while calling getHandle.
- * Defaults to ['*', 'i-default', 'en', 'en-US']
+ * Defaults to:
+ *     ['*', 'i-default', 'en', 'en-US']
  *
  * #### `languages`
  * Array of languages that should be available (required when no `lexicons` provided)
  *
  * #### `lexicons`
- * Object with lexicon per language: `{ 'en-gb': { default: { key: 'value' } } }`
+ * Object with lexicon per language:
+ *
+ *     { 'en-gb': { default: { key: 'value with variable [_1]' } } }
  *
  * #### `defaultDomain`
- * Domain to search in for lexicon keys, defaults to: `*`
+ * Domain to search in for lexicon keys, defaults to:
+ *
+ *     '*'
+ *
+ * @method new maketext
+ * @param  {object} opts Options object
+ * @throws {Error} If neither `lexicons` nor `languages` is given
  */
 var maketext = function(opts) {
     if (!opts) opts = {};
@@ -59,13 +67,85 @@ var maketext = function(opts) {
 maketext.prototype = {
 
     /**
+     * Inject a lexicon with a language key
+     *
+     * @function lexicon
+     * @param  {string} lang    Language key to associate the lexicon with
+     * @param  {string} base    (Optional) Language key of a lexicon that will be used as
+     *                          base for the new lexicon; will get loaded if not already loaded
+     * @param  {object} lexicon Object containing lexicon data: `{ domain: { key: value }}`
+     */
+    lexicon: function(lang, base, lexicon) {
+        if (typeof base !== "string") {
+            lexicon = base;
+            base    = null;
+        }
+
+        // If new lexicon should be based on another one, use the _load function
+        if (base) {
+            var self = this;
+            this._load(base,
+                function() {
+                    self._lexicon_aux(lang, this._cloneObject(self._lexicons[base]), lexicon);
+                },
+                function() {
+                    throw new Error("Can't load lexicon file for `" + lang + "'");
+                }
+            );
+        } else {
+            this._lexicon_aux(lang, {}, lexicon);
+        }
+    },
+
+    /**
+     * Gets a handle for a language and executes callbacks.  Will load unloaded lexicons
+     *
+     * ### Options object explained
+     *
+     * #### `lang`
+     * Defined the language to get the handle for.  Falls back to `navigator.language` or
+     * `navigator.browserLanguage`
+     *
+     * #### `onSuccess`
+     * Success callback function which is called with an instance of `maketext.Handle`.
+     *
+     * #### `onError`
+     * Errpr callback function which is called without any parameter on an error
+     * (timeout when loading language files from the server).
+     *
+     * @function getHandle
+     * @param  {object} opts Options object
+     */
+    getHandle: function(opts) {
+        opts          = opts || {};
+        var lang      = this._resolve_lang(opts.lang || navigator.language || navigator.browserLanguage);
+        var onSuccess = opts.onSuccess;
+        var onError   = opts.onError;
+        var self      = this;
+
+        function success() {
+            onSuccess(new maketext.Handle(self._lexicons[lang], self._defaultDomain));
+        }
+
+        function error() {
+            if (typeof onError === "function") {
+                onError();
+            } else {
+                throw new Error("Can't load lexicon file for `" + lang + "'");
+            }
+        }
+
+        this._load(lang, success, error);
+    },
+
+    /**
      * Loads a language and fires success or error events
      *
+     * @function _load
+     * @api private
      * @param  {string}   lang      Language, eg. 'en-us'
      * @param  {callback} onSuccess Will be called on successful loading
      * @param  {callback} onError   Will be called on an error (eg. language file taking to long to load)
-     *
-     * @return {null}
      */
     _load: function(lang, onSuccess, onError) {
 
@@ -108,45 +188,13 @@ maketext.prototype = {
     },
 
     /**
-     * Inject a lexicon with a language key
-     *
-     * @param  {string} lang    Language key to associate the lexicon with
-     * @param  {string} base    (Optional) Language key of a lexicon that will be used as
-     *                          base for the new lexicon; will get loaded if not already loaded
-     * @param  {object} lexicon Object containing lexicon data: `{ domain: { key: value }}`
-     *
-     * @return {null}
-     */
-    lexicon: function(lang, base, lexicon) {
-        if (typeof base !== "string") {
-            lexicon = base;
-            base    = null;
-        }
-
-        // If new lexicon should be based on another one, use the _load function
-        if (base) {
-            var self = this;
-            this._load(base,
-                function() {
-                    self._lexicon_aux(lang, this._cloneObject(self._lexicons[base]), lexicon);
-                },
-                function() {
-                    throw new Error("Can't load lexicon file for `" + lang + "'");
-                }
-            );
-        } else {
-            this._lexicon_aux(lang, {}, lexicon);
-        }
-    },
-
-    /**
      * Actually sets the lexicon internally, calls success callbacks and clears timeout timer
      *
+     * @function _lexicon_aux
+     * @api private
      * @param  {string} lang    Language key to associate the lexicon with
      * @param  {object} lexobj  Object of the base that will be copied and extended
      * @param  {object} lexicon Object containing lexicon data: `{ domain: { key: value }}`
-     *
-     * @return {null}
      */
     _lexicon_aux: function(lang, lexobj, lexicon) {
         var i;
@@ -173,45 +221,19 @@ maketext.prototype = {
     },
 
     /**
-     * Gets a handle for a language and executes callbacks.  Will load unloaded lexicons
+     * Tries to resolve a language an eventually falls back to the
+     * fallback language when nothing could be resolved.
      *
-     * @param  {object} opts Options object
+     * When you pass 'de-de' as `lang` and only have loaded 'de',
+     * this function will find it, because it tries to search
+     * for the beginning parts of the language if the exact
+     * language couldn't be found.
      *
-     * ### Options object explained
-     *
-     * #### `lang`
-     * Defined the language to get the handle for.  Falls back to `navigator.language` or
-     * `navigator.browserLanguage`
-     *
-     * #### `onSuccess`
-     * Success callback function which is called with an instance of `maketext.Handle`.
-     *
-     * #### `onError`
-     * Errpr callback function which is called without any parameter on an error
-     * (timeout when loading language files from the server).
+     * @function _resolve_lang
+     * @api private
+     * @param  {string} lang Language, eg. 'de' or 'en-gb'
+     * @return {string}      Language that has been found
      */
-    getHandle: function(opts) {
-        opts          = opts || {};
-        var lang      = this._resolve_lang(opts.lang || navigator.language || navigator.browserLanguage);
-        var onSuccess = opts.onSuccess;
-        var onError   = opts.onError;
-        var self      = this;
-
-        function success() {
-            onSuccess(new maketext.Handle(self._lexicons[lang], self._defaultDomain));
-        }
-
-        function error() {
-            if (typeof onError === "function") {
-                onError();
-            } else {
-                throw new Error("Can't load lexicon file for `" + lang + "'");
-            }
-        }
-
-        this._load(lang, success, error);
-    },
-
     _resolve_lang: function(lang) {
         var langs = String(lang).match(/(\w+(?:-\w+)*)/g) || [], i;
 
@@ -243,6 +265,8 @@ maketext.prototype = {
     /**
      * Helper function to clone an object
      *
+     * @function _cloneObject
+     * @api private
      * @param  {object} obj Object to be cloned
      * @return {object}     Cloned object
      */
@@ -256,6 +280,7 @@ maketext.prototype = {
 /**
  * Representing a lexicon handle
  *
+ * @function new maketext.Handle
  * @param {object} lexicon       Lexicon object from `maketext`
  * @param {string} defaultDomain Default domain from `maketext`
  */
@@ -269,18 +294,20 @@ maketext.Handle.prototype = {
     /**
      * Translates a key to a text
      *
-     * @param  {string}     id  The lexicon key to be translated
-     * @param  {string|int} ... Value to be replaced with placeholders (can be repeated)
-     * @param  {object}     ... Optional, more options, currently only supporting `{ domain: 'lexicon-domain' }`
-     *
+     * @function maketext
+     * @param  {string}     id        The lexicon key to be translated
+     * @param  {string|int} value     Value to be replaced with placeholders (can be repeated)
+     * @param  {object}     [options] (Optional) More options, currently only supporting `{ domain: 'lexicon-domain' }`
      * @return {string}         Translated string
      */
     maketext: function(id) {
         var domain = this._defaultDomain,
             index, args;
+
         for (index in arguments) {
             if (Object.prototype.toString.call(arguments[index]) === '[object Object]' &&
-                arguments[index].domain) {
+                arguments[index].domain)
+            {
                 domain = arguments[index].domain;
             }
         }
@@ -290,7 +317,7 @@ maketext.Handle.prototype = {
         }
 
         if (typeof this._lexicon[domain][id] !== "function") {
-            this._lexicon[domain][id] = this.compile(this._lexicon[domain][id]);
+            this._lexicon[domain][id] = this._compile(this._lexicon[domain][id]);
         }
 
         args = Array.prototype.slice.call(arguments, 1);
@@ -300,10 +327,15 @@ maketext.Handle.prototype = {
 
     /**
      * Does something when a key or domain hasn't been found in the lexicon.
-     * Gets passed the same arguments as the `maketext` function
+     * Gets passed the same arguments as the `maketext` function.  Default is
+     * to prefix the given language key with '? '.  Overwrite this if the
+     * behavior should be changed.
      *
-     * @param  {[type]} id [description]
-     * @return {[type]}    [description]
+     * @function failWith
+     * @param  {string}     id        The lexicon key to be translated
+     * @param  {string|int} value     Value to be replaced with placeholders (can be repeated)
+     * @param  {object}     [options] (Optional) More options, currently only supporting `{ domain: 'lexicon-domain' }`
+     * @return {string}    `id` prefixed with '? '
      */
     failWith: function(id) {
         return '? ' + id;
@@ -312,11 +344,11 @@ maketext.Handle.prototype = {
     /**
      * Compiles, interpolates and returns a string depending on the number given
      *
-     * @param {int}     The number to check
-     * @param {string}  If number is 1, this will be returned
-     * @param {string}  If number is > 1 or 0 and 4th parameter is not given, this will be used
-     * @param {string}  If number is 0, this will be used
-     *
+     * @function quant
+     * @param {int}    value    The number to check
+     * @param {string} singular If `value` is 1, this will be returned
+     * @param {string} plural   If `value`is > 1 or 0 and `zero` is not given, this will be used
+     * @param {string} zero     (Optional) If `value` is 0, this will be used
      * @return {string} Compiled and interpolated string
      */
     quant: function() {
@@ -324,16 +356,18 @@ maketext.Handle.prototype = {
         if (arguments[1] == '0' && arguments[4]) quantTemplate = arguments[4];
         quantTemplate = quantTemplate.replace(/(_\d+)/g, '[$1]');
 
-        return this.compile(quantTemplate).apply(this, [this, arguments[1]]);
+        return this._compile(quantTemplate).apply(this, [this, arguments[1]]);
     },
 
     /**
      * Compiles a string, aka preparation for interpolation
      *
+     * @function compile
+     * @api private
      * @param  {string}   str String containing variables
      * @return {function}     Reference to a function, which can be called with parameters that get interpolated
      */
-    compile: function(str) {
+    _compile: function(str) {
         var ctx = (new Parser(str)).parse();
         return eval("0, function(){ return " + ctx.val.compile() + "; }");
     }

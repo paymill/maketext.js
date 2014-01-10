@@ -1,4 +1,4 @@
-/*
+/*!
  * maketext.js
  * https://github.com/paymill/maketext.js
  * GPL licensed
