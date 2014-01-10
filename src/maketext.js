@@ -304,7 +304,7 @@ maketext.Handle.prototype = {
      * @param  {string}     id        The lexicon key to be translated
      * @param  {string|int} value     Value to be replaced with placeholders (can be repeated)
      * @param  {object}     [options] (Optional) More options, currently only supporting `{ domain: 'lexicon-domain' }`
-     * @return {string}         Translated string
+     * @return {string} Translated string
      */
     maketext: function(id) {
         var domain = this._defaultDomain,

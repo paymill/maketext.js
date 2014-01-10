@@ -12,7 +12,7 @@ maketext constructor
 Milliseconds to wait for the server to respond with the language file.
 Defaults to 20000.
 
-#### `base_url`
+#### `baseUrl`
 Base URL to load language files from the server.
 
 #### `fallbackLanguages`

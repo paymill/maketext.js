@@ -59,7 +59,7 @@ module.exports = function(grunt) {
         markdox: {
             sourceFiles: {
                 src: 'src/*.js',
-                dest: 'docs/maketext.md'
+                dest: 'docs/api.tmpl.md'
             }
         }
     });
@@ -69,9 +69,10 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-markdox');
+    grunt.loadNpmTasks('grunt-readme');
 
     // Default task.
     grunt.registerTask('default', ['concat', 'jshint', 'uglify', 'markdox']);
-    grunt.registerTask('dist', ['concat', 'uglify', 'markdox']);
+    grunt.registerTask('dist', ['concat', 'uglify', 'markdox', 'readme']);
 
 };

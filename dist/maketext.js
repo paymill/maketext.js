@@ -1,6 +1,6 @@
-/*! maketext.js - v0.1.1 - 2014-01-10
+/*! maketext.js - v0.1.2 - 2014-01-10
 * https://github.com/paymill/maketext.js
-* GPL licensed; Copyright (c) 2014 Matthias Dietrich / PAYMILL GmbH / Coma-systems Co. Ltd. */
+* GPL licensed; Copyright (c) 2014 PAYMILL GmbH (Matthias Dietrich) / Coma-systems Co. Ltd. */
 'use strict';
 
 /**
@@ -13,7 +13,7 @@
  * Milliseconds to wait for the server to respond with the language file.
  * Defaults to 20000.
  *
- * #### `base_url`
+ * #### `baseUrl`
  * Base URL to load language files from the server.
  *
  * #### `fallbackLanguages`
@@ -43,7 +43,7 @@ var maketext = function(opts) {
     if (!opts) opts = {};
 
     this._loadTimeout       = opts.loadTimeout || 20000; // time to wait for loading script (msec)
-    this._base_url          = opts.base_url || "";
+    this._baseUrl           = opts.baseUrl || "";
     this._fallbackLanguages = opts.fallbackLanguages || ['*', 'i-default', 'en', 'en-US'];
     this._defaultDomain     = opts.defaultDomain || '*';
     this._lexicons          = {};
@@ -183,7 +183,7 @@ maketext.prototype = {
         };
         var script  = document.createElement("script");
         script.type = "text/javascript";
-        script.src  = this._base_url + lang + ".js";
+        script.src  = this._baseUrl + lang + ".js";
         (document.getElementsByTagName("head")[0] || document.body || document).appendChild(script);
     },
 
@@ -298,7 +298,7 @@ maketext.Handle.prototype = {
      * @param  {string}     id        The lexicon key to be translated
      * @param  {string|int} value     Value to be replaced with placeholders (can be repeated)
      * @param  {object}     [options] (Optional) More options, currently only supporting `{ domain: 'lexicon-domain' }`
-     * @return {string}         Translated string
+     * @return {string} Translated string
      */
     maketext: function(id) {
         var domain = this._defaultDomain,
