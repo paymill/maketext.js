@@ -307,25 +307,24 @@ maketext.Handle.prototype = {
      */
     maketext: function(id) {
         var domain = this._defaultDomain,
-            index, args;
+            index, args = Array.prototype.slice.call(arguments, 1);
 
-        for (index in arguments) {
-            if (Object.prototype.toString.call(arguments[index]) === '[object Object]' &&
-                arguments[index].domain)
+        for (index in args) {
+            if (Object.prototype.toString.call(args[index]) === '[object Object]' &&
+                args[index].domain)
             {
-                domain = arguments[index].domain;
+                domain = args[index].domain;
             }
         }
 
         if (!(domain in this._lexicon) || !(id in this._lexicon[domain])) {
-            return this.failWith.apply(this, arguments);
+            return this.failWith.apply(this, args);
         }
 
         if (typeof this._lexicon[domain][id] !== "function") {
             this._lexicon[domain][id] = this._compile(this._lexicon[domain][id]);
         }
 
-        args = Array.prototype.slice.call(arguments, 1);
         args.unshift(this);
         return this._lexicon[domain][id].apply(this, args);
     },
