@@ -318,7 +318,7 @@ maketext.Handle.prototype = {
         }
 
         if (!(domain in this._lexicon) || !(id in this._lexicon[domain])) {
-            return this.failWith.apply(this, args);
+            return this.failWith.apply(this, arguments);
         }
 
         if (typeof this._lexicon[domain][id] !== "function") {

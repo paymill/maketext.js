@@ -1,4 +1,4 @@
-/*! maketext.js - v0.1.3 - 2014-06-24
+/*! maketext.js - v0.1.4 - 2014-10-23
 * https://github.com/paymill/maketext.js
 * GPL licensed; Copyright (c) 2014 PAYMILL GmbH (Matthias Dietrich) / Coma-systems Co. Ltd. */
 'use strict';
@@ -312,7 +312,7 @@ maketext.Handle.prototype = {
         }
 
         if (!(domain in this._lexicon) || !(id in this._lexicon[domain])) {
-            return this.failWith.apply(this, args);
+            return this.failWith.apply(this, arguments);
         }
 
         if (typeof this._lexicon[domain][id] !== "function") {
