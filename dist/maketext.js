@@ -1,6 +1,6 @@
-/*! maketext.js - v0.1.4 - 2014-10-23
+/*! maketext.js - v0.1.5 - 2017-01-17
 * https://github.com/paymill/maketext.js
-* GPL licensed; Copyright (c) 2014 PAYMILL GmbH (Matthias Dietrich) / Coma-systems Co. Ltd. */
+* GPL licensed; Copyright (c) 2017 PAYMILL GmbH (Matthias Dietrich) / Coma-systems Co. Ltd. */
 'use strict';
 
 /**
@@ -370,7 +370,8 @@ maketext.Handle.prototype = {
         return eval("0, function(){ return " + ctx.val.compile() + "; }");
     }
 };
-;'use strict';
+
+module.exports = maketext;;'use strict';
 
 function Lit(str) {
     this.str = String(str);
