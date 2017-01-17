@@ -376,3 +376,5 @@ maketext.Handle.prototype = {
         return eval("0, function(){ return " + ctx.val.compile() + "; }");
     }
 };
+
+module.exports = maketext;
